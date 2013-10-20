@@ -74,8 +74,7 @@
         <session-factory>
             <!-- Database connection settings -->
             <property name="hibernate.connection.driver_class">org.h2.Driver</property>
-            <property name="hibernate.connection.url"
-                >jdbc:h2:mem</property>
+            <property name="hibernate.connection.url">jdbc:h2:mem</property>
             <!-- use c3p0 -->
             <property name="connection.provider_class"
                 >org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider</property>
