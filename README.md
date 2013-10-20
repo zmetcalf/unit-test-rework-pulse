@@ -4,5 +4,4 @@
     
     * Move to RAM Database Configuration
     * Ensure each test works properly
-        * Furthermore make them stronger
     
