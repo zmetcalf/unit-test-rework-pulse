@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration [
+<!ENTITY jaxb_endorsed SYSTEM "pulse.jaxb-endorsed.xml">
+]>
+<configuration bean="org.torweg.pulse.service.PulseConfig">
+    <!-- Configure the pulse container for automatic reloading.
+         The reload interval is given in milliseconds. An interval
+         of 0 (zero) milliseconds turns off automatic reloading. -->
+    <reload-interval>10000</reload-interval>
+    <!-- if tls-available is 'true', you can set the weakest allowed security setting by
+        adding weakest-level="NONE|KEEP|ALWAYS" -->
+    <security tls-available="false" secure-port="443" default-port="80"
+        server-salt="changeMeOnInstall"/>
+    <versioning-prefix>__v</versioning-prefix>
+    <service-request class="org.torweg.pulse.service.request.ServiceRequestImpl"/>
+    <invoker class="org.torweg.pulse.invocation.BundleInvoker"/>
+    <geo-location-provider class="org.torweg.pulse.util.geolocation.GeoIPLocationProvider"/>
+    <captcha-adapter class="org.torweg.pulse.util.captcha.ReCaptchaAdapter"/>
+    <!-- 
+        fop-directory, specifies location of fop.conf.xml
+        also this is being used as base-path & font-base-path
+        required [false]
+    -->
+    <fop-directory>WEB-INF/fop</fop-directory>
+    <!-- 
+        Mail Queue
+        =================================================================
+     -->
+    <mail-queue>
+        <protocol>smtp</protocol>
+        <server port="25">localhost</server>
+        <!--
+        <user>mail-user</user>
+        <password>pass</password>
+        <temporary-directory>/tmp</temporary-directory>
+        -->
+    </mail-queue>
+    <!-- 
+        Virtual File System
+        =================================================================
+     -->
+    <virtual-file-system>
+        <provider realm="public" class="org.torweg.pulse.vfs.providers.SingleFileSystemProvider">
+            <!-- relative paths will be resolved against the webapp root -->
+            <base-path uri="WEB-INF/vfs-public"/>
+            <http-base-path uri="/pulse/vfs-public"/>
+        </provider>
+        <provider realm="private" class="org.torweg.pulse.vfs.providers.SingleFileSystemProvider">
+            <base-path uri="WEB-INF/vfs-private"/>
+            <http-base-path uri="/pulse/vfs-private"/>
+        </provider>
+    </virtual-file-system>
+    <!-- 
+        Cache settings
+        =================================================================        
+    -->
+    <cache vfs-cache-enabled="true">
+        <max-file-size kBytes="350"/>
+        <!-- 50 MB -->
+        <max-cache-size kBytes="51200"/>
+        <max-inactive timespan="3m"/>
+    </cache>
+    <!-- 
+        Hibernate 
+        =================================================================
+    -->
+    <hibernate-configuration>
+        <encryption>
+            <algorithm>PBEWithMD5AndDES</algorithm>
+            <fixed-salt salt="changeMeOnInstall" secret-key="changeMeOnInstall"/>
+            <random-salt secret-key="changeMeOnInstall"/>
+            <pool-size>10</pool-size>
+        </encryption>
+        <session-factory>
+            <!-- Database connection settings -->
+            <property name="hibernate.connection.driver_class">org.h2.Driver</property>
+            <property name="hibernate.connection.url"
+                >jdbc:h2:mem</property>
+            <!-- use c3p0 -->
+            <property name="connection.provider_class"
+                >org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider</property>
+            <property name="hibernate.c3p0.min_size">0</property>
+            <property name="hibernate.c3p0.max_size">30</property>
+            <property name="hibernate.c3p0.timeout">3000</property>
+            <property name="hibernate.c3p0.max_statements">500</property>
+            <property name="hibernate.c3p0.idle_test_period">10</property>
+            <!-- Echo all executed SQL to stdout -->
+            <property name="show_sql">false</property>
+            <!-- Drop and re-create the database schema on startup -->
+            <property name="hbm2ddl.auto">update</property>
+            <!-- hibernate search -->
+            <property name="hibernate.search.index.directory_provider"
+                >org.hibernate.search.store.FSDirectoryProvider</property>
+            <property name="hibernate.search.default.indexBase">WEB-INF/hibernate-search</property>
+            <property name="hibernate.search.lucene_version">LUCENE_36</property>
+            <!-- 
+                core embeddables
+                =========================================================
+             -->
+            <mapping class="org.torweg.pulse.util.time.TimeSpan"/>
+            <mapping class="org.torweg.pulse.util.time.Duration"/>
+            <!--
+                core entity mappings
+                =========================================================
+             -->
+            <!-- Bundle -->
+            <mapping class="org.torweg.pulse.bundle.Bundle"/>
+            <!-- Node -->
+            <mapping class="org.torweg.pulse.util.entity.Node"/>
+            <mapping class="org.torweg.pulse.util.entity.AbstractEncryptableAddress"/>
+            <!-- Sitemap -->
+            <mapping class="org.torweg.pulse.site.map.Sitemap"/>
+            <mapping class="org.torweg.pulse.site.map.SitemapNode"/>
+            <mapping class="org.torweg.pulse.site.map.SitemapSectionTag"/>
+            <mapping class="org.torweg.pulse.site.View"/>
+            <mapping class="org.torweg.pulse.service.request.CommandBuilder"/>
+            <!-- ContentRegistry -->
+            <mapping class="org.torweg.pulse.site.content.ContentRegistry"/>
+            <mapping class="org.torweg.pulse.site.content.AbstractRegistryNode"/>
+            <mapping class="org.torweg.pulse.site.content.RegistryBundleNode"/>
+            <mapping class="org.torweg.pulse.site.content.RegistryLocaleNode"/>
+            <mapping class="org.torweg.pulse.site.content.ContentFolderNode"/>
+            <mapping class="org.torweg.pulse.site.content.ContentNode"/>
+            <!-- content registry new -->
+            <!--<mapping class="org.torweg.pulse.site.content.registry.ContentRegistryNode"/>-->
+            <!-- content -->
+            <mapping class="org.torweg.pulse.site.content.Content"/>
+            <mapping class="org.torweg.pulse.site.content.ContentGroup"/>
+            <mapping class="org.torweg.pulse.site.content.ContentPlugin"/>
+            <mapping class="org.torweg.pulse.site.content.Attachment"/>
+            <mapping class="org.torweg.pulse.site.content.AbstractBasicContent"/>
+            <mapping class="org.torweg.pulse.site.content.AbstractBasicVariant"/>
+            <mapping class="org.torweg.pulse.site.content.ContentLocalizationMap"/>
+            <mapping class="org.torweg.pulse.site.content.Variant"/>
+            <mapping class="org.torweg.pulse.site.content.FileContent"/>
+            <mapping class="org.torweg.pulse.site.content.URLContent"/>
+            <mapping class="org.torweg.pulse.site.content.XMLContentPlugin"/>
+            <!-- search -->
+            <mapping class="org.torweg.pulse.util.search.SearchSuggestion"/>
+            <mapping class="org.torweg.pulse.util.search.SearchFailure"/>
+            <!-- accesscontrol -->
+            <mapping class="org.torweg.pulse.accesscontrol.CommandMatcher"/>
+            <mapping class="org.torweg.pulse.accesscontrol.Permission"/>
+            <mapping class="org.torweg.pulse.accesscontrol.Role"/>
+            <mapping class="org.torweg.pulse.accesscontrol.User"/>
+            <mapping class="org.torweg.pulse.accesscontrol.User$State"/>
+            <mapping class="org.torweg.pulse.accesscontrol.PreliminaryUser"/>
+            <mapping class="org.torweg.pulse.accesscontrol.Profile"/>
+            <mapping class="org.torweg.pulse.accesscontrol.ChangeEmailRequest"/>
+            <mapping class="org.torweg.pulse.accesscontrol.ChangePasswordRequest"/>
+            <!-- util -->
+            <mapping class="org.torweg.pulse.service.request.Parameter"/>
+            <!-- virtual file system -->
+            <mapping class="org.torweg.pulse.vfs.VirtualFile"/>
+            <mapping class="org.torweg.pulse.vfs.VirtualFileSystem$VFSDeferredDelete"/>
+            <mapping class="org.torweg.pulse.webdav.util.DeadProperty"/>
+            <!-- filtering -->
+            <mapping class="org.torweg.pulse.site.content.filter.Filter"/>
+            <mapping class="org.torweg.pulse.site.content.filter.FilterMatches"/>
+            <mapping class="org.torweg.pulse.site.content.filter.FilterRule"/>
+            <mapping class="org.torweg.pulse.site.content.filter.FilterRuleProperty"/>
+            <mapping class="org.torweg.pulse.site.content.filter.FilterContent"/>
+        </session-factory>
+        <!-- used to execute custom SQL directly after database schema updates -->
+        <custom-sql/>
+    </hibernate-configuration>
+    <!--
+        JAXB endorsed packages
+        =================================================================
+    -->
+    &jaxb_endorsed; <!--  -->
+    <!--
+        JobletScheduler
+        =================================================================
+	-->
+    <joblet-scheduler-configuration>
+        <scheduler-factory>
+            <property name="org.quartz.threadPool.class"
+                >org.quartz.simpl.SimpleThreadPool</property>
+            <property name="org.quartz.threadPool.threadCount">5</property>
+        </scheduler-factory>
+    </joblet-scheduler-configuration>
+</configuration>
