@@ -114,15 +114,8 @@
             <mapping class="org.torweg.pulse.site.map.SitemapSectionTag"/>
             <mapping class="org.torweg.pulse.site.View"/>
             <mapping class="org.torweg.pulse.service.request.CommandBuilder"/>
-            <!-- ContentRegistry -->
-            <mapping class="org.torweg.pulse.site.content.ContentRegistry"/>
-            <mapping class="org.torweg.pulse.site.content.AbstractRegistryNode"/>
-            <mapping class="org.torweg.pulse.site.content.RegistryBundleNode"/>
-            <mapping class="org.torweg.pulse.site.content.RegistryLocaleNode"/>
-            <mapping class="org.torweg.pulse.site.content.ContentFolderNode"/>
-            <mapping class="org.torweg.pulse.site.content.ContentNode"/>
             <!-- content registry new -->
-            <!--<mapping class="org.torweg.pulse.site.content.registry.ContentRegistryNode"/>-->
+            <mapping class="org.torweg.pulse.site.content.registry.ContentRegistryNode"/>
             <!-- content -->
             <mapping class="org.torweg.pulse.site.content.Content"/>
             <mapping class="org.torweg.pulse.site.content.ContentGroup"/>
